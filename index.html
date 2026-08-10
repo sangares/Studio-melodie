@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio Mélodie Mondiale Pro - Officiel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        .bg-glow { animation: pulseGlow 6s infinite ease-in-out; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100 overflow-x-hidden relative">
+
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/30 rounded-full blur-3xl bg-glow"></div>
+        <div class="absolute top-1/2 -right-40 w-96 h-96 bg-pink-600/20 rounded-full blur-3xl bg-glow" style="animation-delay: 2s;"></div>
+        <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-amber-600/20 rounded-full blur-3xl bg-glow" style="animation-delay: 4s;"></div>
+    </div>
+
+    <!-- Modal d'Authentification (Essai Gratuit) -->
+    <div id="authModal" class="fixed inset-0 z-[60] bg-slate-950 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/20 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-pink-500/20 rounded-full blur-2xl"></div>
+            
+            <div class="text-center mb-6 relative z-10">
+                <div class="w-16 h-16 bg-gradient-to-tr from-amber-500 via-pink-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-amber-500/20">
+                    <i data-lucide="music-4" class="w-8 h-8 text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">Bienvenue au Studio</h2>
+                <p class="text-sm text-slate-400">Veuillez vérifier votre adresse email pour démarrer votre <b>essai gratuit d'une chanson</b>.</p>
+            </div>
+
+            <form id="emailForm" class="space-y-4 relative z-10">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-400 mb-1">Votre Adresse Email</label>
+                    <div class="relative">
+                        <i data-lucide="mail" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500"></i>
+                        <input type="email" id="authEmail" required placeholder="nom@exemple.com" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-3 py-3 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-lg transition flex items-center justify-center gap-2">
+                    <span>Envoyer le code de vérification</span>
+                    <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+            </form>
+
+            <form id="otpForm" class="space-y-4 hidden relative z-10">
+                <div class="text-center mb-2">
+                    <p class="text-xs text-slate-400">Un code à 4 chiffres a été envoyé à :</p>
+                    <p id="displayUserEmail" class="text-sm font-bold text-indigo-400"></p>
+                    <p class="text-[10px] text-amber-500 mt-2 italic">(Simulation : Tapez "1234" pour vérifier)</p>
+                </div>
+                <div class="flex justify-center gap-3">
+                    <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-indigo-500 focus:outline-none">
+                    <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-indigo-500 focus:outline-none">
+                    <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-indigo-500 focus:outline-none">
+                    <input type="text" maxlength="1" class="otp-input w-12 h-14 text-center text-xl font-bold bg-slate-950 border border-slate-800 rounded-xl text-white focus:border-indigo-500 focus:outline-none">
+                </div>
+                <button type="submit" class="w-full py-3 mt-4 rounded-xl bg-gradient-to-r from-amber-500 to-pink-500 hover:from-amber-400 hover:to-pink-400 text-slate-950 font-bold text-sm shadow-lg transition flex items-center justify-center gap-2">
+                    <span>Valider & Commencer l'Essai</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- En-tête -->
+    <header class="relative z-10 border-b border-slate-800 bg-slate-900/80 backdrop-blur-md px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-gradient-to-tr from-amber-500 via-pink-500 to-indigo-500 rounded-xl shadow-lg shadow-amber-500/20">
+                <i data-lucide="music" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="font-bold text-lg leading-tight bg-gradient-to-r from-white via-slate-200 to-amber-200 bg-clip-text text-transparent">Mélodie Mondiale</h1>
+                    <span id="accountBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">ESSAI</span>
+                </div>
+                <p id="userEmailDisplay" class="text-xs text-slate-400">Non connecté</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="upgradeHeaderBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-pink-500 hover:from-amber-400 hover:to-pink-400 text-slate-950 text-xs font-bold shadow-lg shadow-amber-500/20 transition transform active:scale-95">
+                <i data-lucide="crown" class="w-4 h-4 fill-slate-950"></i><span>Passer Pro (4,99 €)</span>
+            </button>
+            <button id="clearBtn" title="Effacer la grille" class="flex items-center justify-center p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-red-400 text-xs border border-slate-700 transition">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenu Principal -->
+    <main class="relative z-10 flex-1 flex flex-col lg:flex-row gap-4 p-4 max-w-7xl mx-auto w-full overflow-y-auto">
+
+        <!-- Colonne Gauche : Séquenceur -->
+        <div class="flex-1 flex flex-col gap-4">
+
+            <!-- Contrôles -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 backdrop-blur-md shadow-xl flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <button id="playBtn" class="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 via-pink-500 to-amber-500 text-white flex items-center justify-center shadow-lg transition-all transform active:scale-95">
+                        <i data-lucide="play" class="w-6 h-6 fill-white ml-0.5" id="playIcon"></i>
+                    </button>
+                    <div>
+                        <span id="statusLabel" class="text-xs font-semibold uppercase tracking-wider text-amber-400">Prêt</span>
+                        <div class="text-sm font-medium text-slate-200" id="stepCounter">Mesure 1 / 16</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 bg-slate-950/50 px-3 py-2 rounded-xl border border-slate-800/80">
+                    <i data-lucide="clock" class="w-4 h-4 text-slate-400"></i>
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Tempo</label>
+                        <div class="flex items-center gap-2">
+                            <input type="range" id="bpmInput" min="60" max="180" value="110" class="w-20 accent-amber-500">
+                            <span id="bpmValue" class="text-xs font-mono font-bold text-amber-300">110</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 bg-slate-950/50 px-3 py-2 rounded-xl border border-slate-800/80">
+                    <i data-lucide="radio" class="w-4 h-4 text-slate-400"></i>
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Instrument</label>
+                        <select id="instrumentSelect" class="bg-transparent text-xs text-slate-200 focus:outline-none">
+                            <option value="synth" class="bg-slate-900">Synthétiseur Soft</option>
+                            <option value="piano" class="bg-slate-900">Piano Lumineux 🔒</option>
+                            <option value="marimba" class="bg-slate-900">Marimba Festif 🔒</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 bg-slate-950/50 px-3 py-2 rounded-xl border border-slate-800/80">
+                    <i data-lucide="sliders" class="w-4 h-4 text-slate-400"></i>
+                    <div class="flex flex-col">
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Gamme</label>
+                        <select id="scaleSelect" class="bg-transparent text-xs text-slate-200 focus:outline-none">
+                            <option value="pentatonic" class="bg-slate-900">Penta. Universelle</option>
+                            <option value="major" class="bg-slate-900">Majeure Joyeuse</option>
+                            <option value="minor" class="bg-slate-900">Mineure Émouvante</option>
+                            <option value="oriental" class="bg-slate-900">Orientale 🔒</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grille -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex-1 flex flex-col min-h-[360px]">
+                <div class="flex-1 overflow-x-auto pb-2">
+                    <div id="sequencerGrid" class="grid grid-cols-16 gap-1.5 min-w-[640px] h-full"></div>
+                </div>
+            </div>
+
+            <!-- Presets Séquences -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl">
+                <h3 class="text-xs font-bold uppercase text-slate-400 mb-3 flex items-center gap-1.5">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i> Mélodies Rapides
+                </h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <button data-preset="birthday" class="preset-btn p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:bg-slate-800 text-left relative transition">
+                        <span class="absolute top-1 right-1 text-[9px] bg-amber-500 text-slate-950 font-bold px-1 rounded">PRO</span>
+                        <div class="text-xs font-semibold text-amber-300">🎂 Anniversaire</div>
+                    </button>
+                    <button data-preset="wedding" class="preset-btn p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:bg-slate-800 text-left relative transition">
+                        <span class="absolute top-1 right-1 text-[9px] bg-pink-500 text-white font-bold px-1 rounded">PRO</span>
+                        <div class="text-xs font-semibold text-pink-300">💍 Mariage</div>
+                    </button>
+                    <button data-preset="pop" class="preset-btn p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:bg-slate-800 text-left transition">
+                        <div class="text-xs font-semibold text-indigo-400">Pop Solaire</div>
+                    </button>
+                    <button data-preset="lofi" class="preset-btn p-2 rounded-xl bg-slate-950/60 border border-slate-800 hover:bg-slate-800 text-left transition">
+                        <div class="text-xs font-semibold text-pink-400">Lofi Nuit</div>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Colonne Droite : IA & Export -->
+        <div class="w-full lg:w-80 flex flex-col gap-4">
+
+            <!-- IA Paroles -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col flex-1 relative">
+                
+                <div id="aiLimitOverlay" class="hidden absolute inset-0 z-20 bg-slate-900/95 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center p-6 text-center border border-amber-500/30">
+                    <div class="w-12 h-12 bg-amber-500/20 rounded-full flex items-center justify-center mb-3">
+                        <i data-lucide="lock" class="w-6 h-6 text-amber-500"></i>
+                    </div>
+                    <h3 class="text-white font-bold mb-2">Limite d'Essai Atteinte</h3>
+                    <p class="text-xs text-slate-400 mb-4">Vous avez utilisé votre unique génération.</p>
+                    <button onclick="openPaywall()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-pink-500 text-slate-950 font-bold text-xs shadow-lg">
+                        Débloquer l'Illimité (4,99 €)
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="p-1.5 bg-gradient-to-br from-amber-500 to-pink-500 rounded-lg">
+                        <i data-lucide="wand-2" class="w-4 h-4 text-slate-950"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-200">Auteur IA</h2>
+                        <p id="aiUsageText" class="text-[10px] text-emerald-400 font-bold">1 essai restant</p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-4">
+                    <input type="text" id="lyricsTheme" placeholder="Sujet de la chanson..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                    <button id="generateLyricsBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-pink-500 text-slate-950 font-bold text-xs shadow-md flex items-center justify-center gap-2 transition hover:opacity-90">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i><span>Écrire ma chanson gratuite</span>
+                    </button>
+                </div>
+
+                <div class="flex-1 bg-slate-950/80 border border-slate-800/80 rounded-xl p-3 flex flex-col relative min-h-[200px]">
+                    <div id="lyricsStatus" class="hidden absolute inset-0 bg-slate-950/90 rounded-xl flex flex-col items-center justify-center gap-2 z-10">
+                        <div class="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                    <div id="lyricsContainer" class="text-xs text-slate-300 leading-relaxed overflow-y-auto max-h-[220px] whitespace-pre-wrap">
+                        <p class="text-slate-600 italic text-center my-auto">Vos paroles apparaîtront ici.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export -->
+            <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col gap-2">
+                <button id="exportHDBtn" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 transition text-xs text-white font-bold flex items-center justify-center gap-1.5 shadow-lg">
+                    <i data-lucide="download" class="w-4 h-4"></i> <span id="exportText">Exporter Audio 🔒</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Paywall (Identique) -->
+    <div id="paywallModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-lg w-full shadow-2xl relative">
+            <button onclick="closePaywall()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            
+            <div id="paymentStep1">
+                <h3 class="text-xl font-bold text-white mb-1 text-center">Débloquez la version Pro</h3>
+                <p class="text-xs text-slate-400 text-center mb-6">Paiement unique de 4,99 € pour un accès illimité.</p>
+                <form id="userKycForm" class="space-y-3">
+                    <input type="email" id="kycEmail" required readonly class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 cursor-not-allowed">
+                    <input type="text" id="kycName" required placeholder="Nom complet *" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200">
+                    <select id="kycCountry" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200">
+                        <option value="FR">France</option><option value="CI">Côte d'Ivoire</option><option value="SN">Sénégal</option>
+                    </select>
+                    <button type="submit" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-pink-500 text-slate-950 font-bold text-xs mt-4">Continuer vers le paiement</button>
+                </form>
+            </div>
+
+            <div id="paymentStep2" class="hidden">
+                <h3 class="text-lg font-bold text-white text-center mb-4">Moyen de paiement</h3>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <button data-method="Orange Money" class="pay-method-btn p-2 border border-slate-800 bg-slate-950 rounded-xl text-xs text-slate-200">Orange Money</button>
+                    <button data-method="Wave" class="pay-method-btn p-2 border border-slate-800 bg-slate-950 rounded-xl text-xs text-slate-200">Wave</button>
+                    <button data-method="Carte Bancaire" class="pay-method-btn p-2 border border-slate-800 bg-slate-950 rounded-xl text-xs text-slate-200">Carte</button>
+                    <button data-method="Apple Pay" class="pay-method-btn p-2 border border-slate-800 bg-slate-950 rounded-xl text-xs text-slate-200">Apple/Google</button>
+                </div>
+                <button id="executePaymentBtn" disabled class="w-full py-3 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs cursor-not-allowed">Sélectionnez un mode</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-emerald-500 text-slate-950 font-bold px-4 py-3 rounded-xl flex items-center gap-2 text-xs shadow-lg">
+        <i data-lucide="check-circle" class="w-4 h-4"></i><span id="toastMessage"></span>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Variables Globales
+        let isProUser = false;
+        let hasUsedFreeTrial = false;
+        let currentUserEmail = "";
+
+        // ==========================================
+        // 1. GESTION BOUTONS AUTH & PRO
+        // ==========================================
+        document.getElementById('emailForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentUserEmail = document.getElementById('authEmail').value;
+            document.getElementById('kycEmail').value = currentUserEmail;
+            document.getElementById('displayUserEmail').textContent = currentUserEmail;
+            document.getElementById('emailForm').classList.add('hidden');
+            document.getElementById('otpForm').classList.remove('hidden');
+            document.querySelectorAll('.otp-input')[0].focus();
+        });
+
+        // OTP inputs auto-focus
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < 3) otpInputs[index + 1].focus();
+            });
+        });
+
+        document.getElementById('otpForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('authModal').classList.add('hidden');
+            document.getElementById('userEmailDisplay').textContent = currentUserEmail;
+            showToast("Connexion réussie !");
+        });
+
+        document.getElementById('upgradeHeaderBtn').addEventListener('click', openPaywall);
+
+        // ==========================================
+        // 2. GESTION SÉQUENCEUR ET BOUTONS AUDIO
+        // ==========================================
+        let audioCtx = null, isPlaying = false, currentStep = 0, intervalId = null;
+        let bpm = 110, currentInstrument = 'synth', currentScale = 'pentatonic';
+        const STEPS = 16;
+        let grid = Array(8).fill(null).map(() => Array(STEPS).fill(false));
+
+        const SCALES = {
+            pentatonic: [523.25, 440.00, 392.00, 329.63, 293.66, 261.63, 220.00, 196.00],
+            major: [523.25, 493.88, 440.00, 392.00, 349.23, 329.63, 293.66, 261.63],
+            minor: [523.25, 466.16, 440.00, 392.00, 349.23, 311.13, 293.66, 261.63],
+            oriental: [523.25, 493.88, 415.30, 392.00, 349.23, 277.18, 261.63, 220.00]
+        };
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        // BOUTON CORBEILLE (Clear)
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            grid = Array(8).fill(null).map(() => Array(STEPS).fill(false));
+            renderGrid();
+            showToast("Grille effacée !");
+        });
+
+        // CURSEUR BPM
+        document.getElementById('bpmInput').addEventListener('input', (e) => {
+            bpm = e.target.value;
+            document.getElementById('bpmValue').textContent = bpm;
+            if (isPlaying) {
+                clearInterval(intervalId);
+                intervalId = setInterval(step, (60 / bpm / 4) * 1000);
+            }
+        });
+
+        // SÉLECTEUR INSTRUMENT
+        document.getElementById('instrumentSelect').addEventListener('change', (e) => {
+            if ((e.target.value === 'piano' || e.target.value === 'marimba') && !isProUser) {
+                openPaywall();
+                e.target.value = 'synth'; // reset
+                return;
+            }
+            currentInstrument = e.target.value;
+        });
+
+        // SÉLECTEUR GAMME
+        document.getElementById('scaleSelect').addEventListener('change', (e) => {
+            if (e.target.value === 'oriental' && !isProUser) {
+                openPaywall();
+                e.target.value = 'pentatonic'; // reset
+                return;
+            }
+            currentScale = e.target.value;
+        });
+
+        // BOUTONS PRESETS
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.preset;
+                if ((type === 'birthday' || type === 'wedding') && !isProUser) {
+                    openPaywall();
+                    return;
+                }
+                
+                // Remplissage d'une mélodie générique pour le bouton appuyé
+                grid = Array(8).fill(null).map(() => Array(STEPS).fill(false));
+                for(let i=0; i<STEPS; i+= (type === 'pop' ? 2 : type === 'lofi' ? 4 : 1)) {
+                    if (Math.random() > 0.3) {
+                        let randomRow = Math.floor(Math.random() * 8);
+                        grid[randomRow][i] = true;
+                    }
+                }
+                renderGrid();
+                showToast(`Mélodie "${type}" chargée !`);
+            });
+        });
+
+        // ==========================================
+        // MOTEUR AUDIO (Grille & Lecture)
+        // ==========================================
+        function renderGrid() {
+            const sequencerGridEl = document.getElementById('sequencerGrid');
+            sequencerGridEl.innerHTML = '';
+            for (let r = 0; r < 8; r++) {
+                for (let c = 0; c < STEPS; c++) {
+                    const cell = document.createElement('button');
+                    const isActive = grid[r][c];
+                    const isCurrentCol = currentStep === c && isPlaying;
+                    let bgClass = isActive ? 'bg-gradient-to-tr from-amber-500 to-pink-500 border-amber-300' : 'bg-slate-950/70 border-slate-800/80 hover:bg-slate-800';
+                    if (isCurrentCol) bgClass += ' ring-2 ring-amber-300 z-10';
+                    cell.className = `h-10 rounded-lg border transition-all duration-100 ${bgClass}`;
+                    cell.addEventListener('click', () => {
+                        initAudio(); 
+                        grid[r][c] = !grid[r][c];
+                        if (grid[r][c]) playNote(SCALES[currentScale][r], 0.15);
+                        renderGrid();
+                    });
+                    sequencerGridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function playNote(freq, duration = 0.2) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.type = currentInstrument === 'synth' ? 'sine' : currentInstrument === 'piano' ? 'triangle' : 'square';
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            osc.connect(gainNode); 
+            gainNode.connect(audioCtx.destination);
+            osc.start(); 
+            osc.stop(audioCtx.currentTime + duration * 1.5);
+        }
+
+        function step() {
+            for (let r = 0; r < 8; r++) if (grid[r][currentStep]) playNote(SCALES[currentScale][r], 0.25);
+            renderGrid();
+            document.getElementById('stepCounter').textContent = `Mesure ${Math.floor(currentStep / 4) + 1} • Temps ${(currentStep % 4) + 1}`;
+            currentStep = (currentStep + 1) % STEPS;
+        }
+
+        // BOUTON LECTURE
+        document.getElementById('playBtn').addEventListener('click', () => {
+            initAudio();
+            if (isPlaying) {
+                isPlaying = false; clearInterval(intervalId);
+                document.getElementById('playIcon').setAttribute('data-lucide', 'play');
+            } else {
+                isPlaying = true; intervalId = setInterval(step, (60 / bpm / 4) * 1000);
+                document.getElementById('playIcon').setAttribute('data-lucide', 'square');
+            }
+            lucide.createIcons();
+        });
+
+        // ==========================================
+        // 3. GESTION BOUTONS IA & EXPORT
+        // ==========================================
+        
+        // BOUTON GÉNÉRATION IA
+        document.getElementById('generateLyricsBtn').addEventListener('click', () => {
+            if (!isProUser && hasUsedFreeTrial) {
+                document.getElementById('aiLimitOverlay').classList.remove('hidden');
+                return;
+            }
+
+            const theme = document.getElementById('lyricsTheme').value || "L'amour et la musique";
+            document.getElementById('lyricsStatus').classList.remove('hidden');
+            
+            // Simulation API rapide
+            setTimeout(() => {
+                document.getElementById('lyricsContainer').innerHTML = `<b>(Couplet 1)</b><br>On avance sous les étoiles<br>Le cœur rempli de ${theme}<br>La musique lève le voile<br><br><b>(Refrain)</b><br>Chante, laisse parler la mélodie<br>C'est la bande son de nos vies !`;
+                document.getElementById('lyricsStatus').classList.add('hidden');
+                
+                if (!isProUser) {
+                    hasUsedFreeTrial = true;
+                    document.getElementById('aiUsageText').textContent = "0 essai restant";
+                    document.getElementById('aiUsageText').className = "text-[10px] text-red-400 font-bold";
+                }
+                showToast("Paroles générées !");
+            }, 1500);
+        });
+
+        // BOUTON EXPORT HD
+        document.getElementById('exportHDBtn').addEventListener('click', () => {
+            if (!isProUser) {
+                openPaywall();
+                return;
+            }
+            showToast("Conversion audio en cours...");
+            setTimeout(() => {
+                showToast("Fichier MP3 téléchargé !");
+            }, 2500);
+        });
+
+
+        // ==========================================
+        // UTILITAIRES ET PAIEMENT
+        // ==========================================
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = msg;
+            t.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
+
+        function openPaywall() { document.getElementById('paywallModal').classList.remove('hidden'); }
+        function closePaywall() { document.getElementById('paywallModal').classList.add('hidden'); }
+
+        document.getElementById('userKycForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('paymentStep1').classList.add('hidden');
+            document.getElementById('paymentStep2').classList.remove('hidden');
+        });
+
+        document.querySelectorAll('.pay-method-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.pay-method-btn').forEach(b => b.classList.remove('border-amber-500'));
+                btn.classList.add('border-amber-500');
+                const btnPay = document.getElementById('executePaymentBtn');
+                btnPay.disabled = false;
+                btnPay.className = "w-full py-3 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs";
+                btnPay.textContent = `Payer 4,99€ avec ${btn.dataset.method}`;
+            });
+        });
+
+        document.getElementById('executePaymentBtn').addEventListener('click', () => {
+            isProUser = true;
+            document.getElementById('accountBadge').textContent = "PRO ACTIF";
+            document.getElementById('upgradeHeaderBtn').classList.add('hidden');
+            document.getElementById('exportText').textContent = "Exporter Audio (MP3)";
+            document.getElementById('aiLimitOverlay').classList.add('hidden');
+            hasUsedFreeTrial = false;
+            document.getElementById('aiUsageText').textContent = "Illimité";
+            document.getElementById('aiUsageText').className = "text-[10px] text-amber-400 font-bold";
+            closePaywall();
+            showToast("Compte Pro activé ! Merci.");
+        });
+
+        renderGrid();
+    </script>
+</body>
+</html>
+
